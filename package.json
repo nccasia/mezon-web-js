@@ -1,0 +1,19 @@
+{
+  "name": "mezon-sdk",
+  "version": "1.0.0",
+  "main": "build/mezon-web-sdk.js",
+  "types": "build/mezon-web-sdk.d.ts",
+  "scripts": {
+    "build": "webpack --mode production",
+    "build:types": "tsc src/index.ts --declaration --emitDeclarationOnly --outDir build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "SDK for mezon mini app",
+  "devDependencies": {
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.6.3",
+    "webpack-cli": "^5.1.4"
+  }
+}
