@@ -16,7 +16,10 @@ export enum MezonEventType {
 }
 
 export type MezonEvent = MezonEventType;
-export type MezonEventHandler<T> = (eventType: MezonEvent, data?: T) => void;
+export type MezonEventHandler<T> = (
+  eventType: MezonEvent,
+  eventData?: T
+) => void;
 export type EventHandlers<T> = Record<string, MezonEventHandler<T>[]>;
 export type InitParams = Record<string, string | null>;
 
@@ -25,6 +28,6 @@ export interface IMezonWebView {
   isIframe: boolean;
   onEvent<T>(eventType: MezonEvent, callback: MezonEventHandler<T>): void;
   offEvent<T>(eventType: MezonEvent, callback: MezonEventHandler<T>): void;
-  postEvent<T>(eventType: MezonEvent, callback: Function, eventData: T): void;
-  receiveEvent<T>(event: MezonEvent | null, data?: T): void;
+  postEvent<T>(eventType: MezonEvent, eventData: T, callback: Function): void;
+  receiveEvent<T>(event: MezonEvent | null, eventData?: T): void;
 }

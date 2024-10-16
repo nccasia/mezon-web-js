@@ -28,8 +28,8 @@ export class MezonWebView implements IMezonWebView {
   //#region Public methods
   public postEvent<T>(
     eventType: string,
-    callback: Function,
-    eventData: T
+    eventData: T,
+    callback: Function
   ): void {
     if (!callback) {
       callback = function () {};
