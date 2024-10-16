@@ -2,9 +2,9 @@ import { TRUSTED_TARGET } from './constant';
 import {
   EventHandlers,
   IMezonWebView,
-  MezonEvent,
   MezonEventHandler,
-  MezonEventType,
+  MezonAppEvent,
+  MezonWebViewEvent,
 } from './types';
 import {
   sessionStorageGet,
@@ -52,7 +52,7 @@ export class MezonWebView implements IMezonWebView {
     }
   }
 
-  public receiveEvent<T>(eventType: MezonEvent, eventData: T): void {
+  public receiveEvent<T>(eventType: MezonAppEvent, eventData: T): void {
     console.log('[Mezon.WebView] < receiveEvent', eventType, eventData);
     this.callEventCallbacks<T>(
       eventType,
@@ -63,7 +63,7 @@ export class MezonWebView implements IMezonWebView {
   }
 
   public onEvent<T>(
-    eventType: MezonEvent,
+    eventType: MezonAppEvent,
     callback: MezonEventHandler<T>
   ): void {
     if (!Array.isArray(this.eventHandlers[eventType])) {
@@ -76,7 +76,7 @@ export class MezonWebView implements IMezonWebView {
   }
 
   public offEvent<T>(
-    eventType: MezonEvent,
+    eventType: MezonAppEvent,
     callback: MezonEventHandler<T>
   ): void {
     if (!Array.isArray(this.eventHandlers[eventType])) {
@@ -120,7 +120,7 @@ export class MezonWebView implements IMezonWebView {
       try {
         window.parent.postMessage(
           JSON.stringify({
-            eventType: MezonEventType.IframeReady,
+            eventType: MezonWebViewEvent.IframeReady,
             eventData: { reload_supported: true },
           }),
           '*'
@@ -133,7 +133,7 @@ export class MezonWebView implements IMezonWebView {
     const webview = this;
     window.addEventListener('message', function (event: MessageEvent<string>) {
       if (event.source !== window.parent) return;
-      let dataParsed: { eventType?: MezonEventType; eventData?: unknown } = {};
+      let dataParsed: { eventType?: MezonAppEvent; eventData?: unknown } = {};
       try {
         dataParsed = JSON.parse(event.data);
       } catch (e) {
@@ -143,7 +143,7 @@ export class MezonWebView implements IMezonWebView {
         return;
       }
       switch (dataParsed.eventType) {
-        case MezonEventType.SetCustomStyle:
+        case MezonAppEvent.SetCustomStyle:
           if (
             event.origin === TRUSTED_TARGET &&
             typeof dataParsed.eventData === 'string'
@@ -151,11 +151,11 @@ export class MezonWebView implements IMezonWebView {
             webview.iFrameStyle.innerHTML = dataParsed.eventData;
           }
           break;
-        case MezonEventType.ReloadIframe:
+        case MezonAppEvent.ReloadIframe:
           try {
             window.parent.postMessage(
               JSON.stringify({
-                eventType: MezonEventType.IframeWillReloaded,
+                eventType: MezonWebViewEvent.IframeWillReloaded,
               }),
               '*'
             );
@@ -172,7 +172,7 @@ export class MezonWebView implements IMezonWebView {
   }
 
   private callEventCallbacks<T>(
-    eventType: MezonEvent,
+    eventType: MezonAppEvent,
     func: (callback: MezonEventHandler<T>) => void
   ): void {
     const currentEventHandlers = this.eventHandlers[eventType];
