@@ -38,3 +38,7 @@ typings/
 lib/*.js
 test/*.js
 *.map
+
+.env
+
+.DS_STORE
